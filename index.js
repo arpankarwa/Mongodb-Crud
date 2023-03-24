@@ -1,4 +1,3 @@
-
 var express = require('express');
 var app = express();
 app.use(express.json());
@@ -9,14 +8,11 @@ var mongoose = require('mongoose');
 var port = process.env.PORT || 4000;
 
 mongoose.connect("mongodb://localhost:27017/crudApp", {
-
     useNewUrlParser: true,
     useUnifiedTopology: true
 }).then(() => {
-
     console.log("connection with database is successful");
 }).catch(() => {
-
     console.log("connection with database is failed....");
 })
 
@@ -31,13 +27,7 @@ const Employee = new mongoose.model("Employee", employeeSchema);
 
 // -------------------------------------------------------------------------------------------
 
-app.get('/', (req, res) => {
-    console.log("get is working");
-    res.send('get is working');
-})
-
-// -------------------------------------------------------------------------------------------
-
+// inserting record
 app.post('/insert', async (req, res) => {
 
     const dataInsert = new Employee({
@@ -49,13 +39,13 @@ app.post('/insert', async (req, res) => {
 
     const values = await dataInsert.save();
     res.send("data inserted successfully..\n" + values);
-    // res.send(values.json());
+    console.log("data inserted successfully..\n" + values);
 
 })
 
 // -------------------------------------------------------------------------------------------
 
-//updating data
+//updating record
 app.put('/update/:email', async (req, res) => {
 
     let newEmail = req.params.email;
@@ -78,12 +68,12 @@ app.put('/update/:email', async (req, res) => {
 
 // -------------------------------------------------------------------------------------------
 
+// get all records
 app.get('/getAllEmployees', async (req, res) => {
 
-    Employee.find().then(() => {
-        console.log("all employees fetched\n" + res);
-        // res.send("all employees fetched\n" + res);
-        res.send("all employees fetched\n" + res);
+    Employee.find().then((data) => {
+        console.log("all employees fetched\n" + data);
+        res.send("all employees fetched\n" + data);
     }).catch((err) => {
         console.log("error generated:- " + err);
         res.send("error generated\n" + err);
@@ -92,15 +82,53 @@ app.get('/getAllEmployees', async (req, res) => {
 
 // -------------------------------------------------------------------------------------------
 
+// get by email
+// not working properly
+app.get('/getByEmail/:email', (req, res) => {
+
+    let newEmail = req.params.email;
+
+    Employee.find(({ email: newEmail }), function (err, data) {
+        if (err) {
+            console.log("error :- " + err);
+            res.send("error :- " + err)
+        }
+        else {
+            if (data.length == 0) {
+                console.log("record not exist :- " + data);
+                res.send("record not exist :- " + data)
+            } else {
+                console.log("record fetched :- " + data);
+                res.send("record fetched :- " + data)
+            }
+
+        }
+    })
+})
+
+// -------------------------------------------------------------------------------------------
+
+// delete record
+// not working properly
 app.delete('/deleteOne/:email', async (req, res) => {
 
     let newEmail = req.params.email;
 
-    Employee.deleteOne({ email: newEmail }).then(() => {
-        console.log("record deleted\n" + newEmail);
-        res.send("record deleted\n" + newEmail);
+    Employee.findOneAndDelete({ email: newEmail }).then(() => {
+
+        // if (!newEmail) {
+        //     console.log("email not present :- " + newEmail);
+        //     res.send("email not present :- " + newEmail);
+        // }
+        // else {
+        //     console.log("record deleted :- " + newEmail);
+        //     res.send("record deleted :- " + newEmail);
+        // }
+        console.log("record deleted :- " + newEmail);
+        res.send("record deleted :- " + newEmail);
+
     }).catch((err) => {
-        console.log("error generated:- " + err);
+        console.log("error generated\n" + err);
         res.send("error generated\n" + err);
     })
 })
