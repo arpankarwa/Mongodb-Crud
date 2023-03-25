@@ -37,6 +37,17 @@ app.post('/insert', async (req, res) => {
         phone: req.body.phone
     });
 
+    // if (dataInsert.newEmail.length > 0) {
+    //     console.log("email already exist\n");
+    //     res.send("email already exist\n");
+    // }
+    // else {
+    //     const values = await dataInsert.save();
+    //     res.send("data inserted successfully..\n" + values);
+    //     console.log("data inserted successfully..\n" + values);
+    // }
+
+
     const values = await dataInsert.save();
     res.send("data inserted successfully..\n" + values);
     console.log("data inserted successfully..\n" + values);
