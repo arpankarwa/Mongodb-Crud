@@ -83,49 +83,43 @@ app.get('/getAllEmployees', async (req, res) => {
 // -------------------------------------------------------------------------------------------
 
 // get by email
-// not working properly
 app.get('/getByEmail/:email', (req, res) => {
 
     let newEmail = req.params.email;
 
-    Employee.find(({ email: newEmail }), function (err, data) {
-        if (err) {
-            console.log("error :- " + err);
-            res.send("error :- " + err)
-        }
-        else {
-            if (data.length == 0) {
-                console.log("record not exist :- " + data);
-                res.send("record not exist :- " + data)
+    Employee.find(({ email: newEmail }))
+        .then((data) => {
+            if ((data == null) || (data.length == 0)) {
+                console.log("record not found:-\n" + data);
+                res.send("record not found:-\n" + data);
             } else {
-                console.log("record fetched :- " + data);
-                res.send("record fetched :- " + data)
+                console.log("record fetched:-\n" + data);
+                res.send("record fetched:-\n" + data);
             }
-
-        }
-    })
+        })
+        .catch((err) => {
+            console.log("error generated:- " + err);
+            res.send("error generated:- " + err);
+        })
 })
 
 // -------------------------------------------------------------------------------------------
 
 // delete record
-// not working properly
 app.delete('/deleteOne/:email', async (req, res) => {
 
     let newEmail = req.params.email;
 
-    Employee.findOneAndDelete({ email: newEmail }).then(() => {
+    Employee.findOneAndDelete({ email: newEmail }).then((data) => {
 
-        // if (!newEmail) {
-        //     console.log("email not present :- " + newEmail);
-        //     res.send("email not present :- " + newEmail);
-        // }
-        // else {
-        //     console.log("record deleted :- " + newEmail);
-        //     res.send("record deleted :- " + newEmail);
-        // }
-        console.log("record deleted :- " + newEmail);
-        res.send("record deleted :- " + newEmail);
+        if ((data == null) || (data.length == 0)) {
+            console.log("email not present :- " + newEmail);
+            res.send("email not present :- " + newEmail);
+        }
+        else {
+            console.log("record deleted :- " + newEmail);
+            res.send("record deleted :- " + newEmail);
+        }
 
     }).catch((err) => {
         console.log("error generated\n" + err);
